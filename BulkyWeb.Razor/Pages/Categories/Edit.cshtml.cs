@@ -32,7 +32,7 @@ namespace BulkyWeb.Razor.Pages.Categories
                 _dbContext.Categories.Update(Category);
                 _dbContext.SaveChanges();
 
-                //TempData["success"] = "Category updated successfully";
+                TempData["success"] = "Category updated successfully";
 
                 return RedirectToPage("Index");
             }

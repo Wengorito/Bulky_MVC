@@ -25,6 +25,9 @@ namespace BulkyWeb.Razor.Pages.Categories
         {
             _dbContext.Categories.Add(Category);
             _dbContext.SaveChanges();
+
+            TempData["success"] = "Category updated successfully";
+
             return RedirectToPage("Index");
         }
     }

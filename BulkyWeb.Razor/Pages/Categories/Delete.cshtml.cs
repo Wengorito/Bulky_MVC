@@ -29,7 +29,7 @@ namespace BulkyWeb.Razor.Pages.Categories
             _dbContext.Categories.Remove(Category);
             _dbContext.SaveChanges();
 
-            //TempData["success"] = "Category deleted successfully";
+            TempData["success"] = "Category deleted successfully";
 
             return RedirectToPage("Index");
         }
