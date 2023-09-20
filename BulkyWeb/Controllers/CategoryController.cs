@@ -1,21 +1,22 @@
-﻿using Bulky.DataAccess.Migrations;
+﻿using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace BulkyWeb.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly ICategoryRepository _repository;
 
-        public CategoryController(ApplicationDbContext db)
+        public CategoryController(ICategoryRepository repository)
         {
-            _db = db;
+            _repository = repository;
         }
 
         public IActionResult Index()
         {
-            var objCategoryList = _db.Categories.ToList();
+            var objCategoryList = _repository.GetAll();
             return View(objCategoryList);
         }
 
@@ -34,8 +35,8 @@ namespace BulkyWeb.Controllers
 
             if (ModelState.IsValid)
             {
-                _db.Categories.Add(obj);
-                _db.SaveChanges();
+                _repository.Add(obj);
+                _repository.Save();
 
                 TempData["success"] = "Category created successfully";
 
@@ -52,7 +53,7 @@ namespace BulkyWeb.Controllers
                 return NotFound();
             }
 
-            var objFromDb = _db.Categories.Find(id);
+            var objFromDb = _repository.Get(u => u.Id == id);
             if (objFromDb == null)
             {
                 return NotFound();
@@ -66,8 +67,8 @@ namespace BulkyWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                _db.Categories.Update(obj);
-                _db.SaveChanges();
+                _repository.Update(obj);
+                _repository.Save();
 
                 TempData["success"] = "Category updated successfully";
 
@@ -84,7 +85,11 @@ namespace BulkyWeb.Controllers
                 return NotFound();
             }
 
-            Category? objFromDb = _db.Categories.Find(id);
+            Category? objFromDb = _repository.Get(u => u.Id == id);
+            //Category? objFromDb1 = _db.Categories.FirstOrDefault(u => u.Id == id); 
+            //Category? objFromDb2 = _db.Categories.Where(u => u.Id == id).FirstOrDefault();
+            // 3 ways the same yield, but more filtering options than just id
+
             if (objFromDb == null)
             {
                 return NotFound();
@@ -96,15 +101,15 @@ namespace BulkyWeb.Controllers
         [HttpPost, ActionName("Delete")]
         public IActionResult DeletePOST(int? id)
         {
-            Category? obj = _db.Categories.Find(id);
+            Category? obj = _repository.Get(u => u.Id == id);
 
             if (obj == null)
             {
                 return NotFound();
             }
 
-            _db.Categories.Remove(obj);
-            _db.SaveChanges();
+            _repository.Remove(obj);
+            _repository.Save();
 
             TempData["success"] = "Category removed successfully";
 
