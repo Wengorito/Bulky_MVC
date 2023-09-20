@@ -1,6 +1,6 @@
-using Bulky.DataAccess.Migrations;
-using Bulky.DataAccess.Repository;
-using Bulky.DataAccess.Repository.IRepository;
+using BulkyBook.DataAccess.Migrations;
+using BulkyBook.DataAccess.Repository;
+using BulkyBook.DataAccess.Repository.IRepository;
 
 using Microsoft.EntityFrameworkCore;
 

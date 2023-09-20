@@ -1,7 +1,8 @@
-﻿using Bulky.Models;
+﻿using BulkyBook.Models;
+
 using Microsoft.EntityFrameworkCore;
 
-namespace Bulky.DataAccess.Migrations
+namespace BulkyBook.DataAccess.Migrations
 {
     public class ApplicationDbContext : DbContext
     {
