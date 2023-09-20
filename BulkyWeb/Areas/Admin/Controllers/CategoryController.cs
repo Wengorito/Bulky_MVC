@@ -3,8 +3,9 @@ using BulkyBook.Models;
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace BulkyBook.Web.Controllers
+namespace BulkyBook.Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
