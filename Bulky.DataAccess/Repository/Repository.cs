@@ -32,19 +32,16 @@ namespace Bulky.DataAccess.Repository
         public void Add(T entity)
         {
             _dbSet.Add(entity);
-            _context.SaveChanges();
         }
 
         public void Remove(T entity)
         {
             _context.Remove(entity);
-            _context.SaveChanges();
         }
 
         public void RemoveRange(IEnumerable<T> entities)
         {
             _context.RemoveRange(entities);
-            _context.SaveChanges();
         }
     }
 }
