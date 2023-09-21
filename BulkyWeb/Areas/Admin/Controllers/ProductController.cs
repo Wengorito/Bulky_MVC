@@ -2,6 +2,7 @@
 using BulkyBook.Models;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BulkyBook.Web.Areas.Admin.Controllers
 {
@@ -18,11 +19,22 @@ namespace BulkyBook.Web.Areas.Admin.Controllers
         public IActionResult Index()
         {
             var products = _unitOfWork.Product.GetAll();
+
             return View(products);
         }
 
         public IActionResult Create()
         {
+
+            IEnumerable<SelectListItem> categoryList = _unitOfWork.Category.GetAll().Select(u =>
+                new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                });
+
+            ViewBag.CategoryList = categoryList;
+
             return View();
         }
 
