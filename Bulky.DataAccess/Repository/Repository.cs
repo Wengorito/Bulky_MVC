@@ -23,6 +23,11 @@ namespace Bulky.DataAccess.Repository
             return _dbSet.ToList();
         }
 
+        public T? Get(int id)
+        {
+            return _dbSet.Find(id);
+        }
+
         public T? Get(Expression<Func<T, bool>> filter)
         {
             var query = _dbSet.Where(filter);
