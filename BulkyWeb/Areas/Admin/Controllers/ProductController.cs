@@ -33,7 +33,8 @@ namespace BulkyBook.Web.Areas.Admin.Controllers
                     Value = u.Id.ToString()
                 });
 
-            ViewBag.CategoryList = categoryList;
+            //ViewBag.CategoryList = categoryList;
+            ViewData["CategoryList"] = categoryList;
 
             return View();
         }
@@ -71,6 +72,15 @@ namespace BulkyBook.Web.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+
+            IEnumerable<SelectListItem> categoryList = _unitOfWork.Category.GetAll().Select(u =>
+                new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                });
+
+            ViewData["CategoryList"] = categoryList;
 
             return View(objFromDb);
         }
