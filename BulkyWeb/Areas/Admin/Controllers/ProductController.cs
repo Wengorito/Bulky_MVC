@@ -1,5 +1,6 @@
 ﻿using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
+using BulkyBook.Models.ViewModels;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -25,39 +26,51 @@ namespace BulkyBook.Web.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
+            var vm = new ProductVM
+            {
+                Product = new Product(),
+                CategoryList = _unitOfWork.Category.GetAll().Select(u =>
+                    new SelectListItem
+                    {
+                        Text = u.Name,
+                        Value = u.Id.ToString()
+                    })
+            };
 
-            IEnumerable<SelectListItem> categoryList = _unitOfWork.Category.GetAll().Select(u =>
-                new SelectListItem
-                {
-                    Text = u.Name,
-                    Value = u.Id.ToString()
-                });
-
-            //ViewBag.CategoryList = categoryList;
-            ViewData["CategoryList"] = categoryList;
-
-            return View();
+            return View(vm);
         }
 
         [HttpPost]
-        public IActionResult Create(Product obj)
+        public IActionResult Create(ProductVM vm)
         {
-            if (obj.Price100 > obj.Price50)
+            if (vm.Product.Price100 > vm.Product.Price50)
             {
                 ModelState.AddModelError("", "Price 50+ should be higher than price 100+.");
             }
 
             if (ModelState.IsValid)
             {
-                _unitOfWork.Product.Add(obj);
+                _unitOfWork.Product.Add(vm.Product);
                 _unitOfWork.Save();
 
                 TempData["success"] = "Product created successfully";
 
                 return RedirectToAction("Index");
             }
+            else
+            {
+                vm.CategoryList = _unitOfWork.Category.GetAll().Select(u =>
+                    new SelectListItem
+                    {
+                        Text = u.Name,
+                        Value = u.Id.ToString()
+                    });
 
-            return View(obj);
+                TempData["error"] = "Create product failed";
+
+
+                return View(vm);
+            }
         }
 
         public IActionResult Edit(int? id)
