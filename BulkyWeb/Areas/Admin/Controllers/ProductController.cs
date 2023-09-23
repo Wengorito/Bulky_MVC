@@ -21,7 +21,7 @@ namespace BulkyBook.Web.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            var products = _unitOfWork.Product.GetAll();
+            var products = _unitOfWork.Product.GetAll(includeProperties: "Category");
 
             return View(products);
         }
