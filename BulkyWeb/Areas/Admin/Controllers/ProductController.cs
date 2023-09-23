@@ -114,56 +114,35 @@ namespace BulkyBook.Web.Areas.Admin.Controllers
             }
         }
 
-        public IActionResult Delete(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-
-            Product? objFromDb = _unitOfWork.Product.Get(id.Value);
-            //Category? objFromDb1 = _db.Categories.FirstOrDefault(u => u.Id == id); 
-            //Category? objFromDb2 = _db.Categories.Where(u => u.Id == id).FirstOrDefault();
-            // 3 ways the same yield, but more filtering options than just id
-
-            if (objFromDb == null)
-            {
-                return NotFound();
-            }
-
-            return View(objFromDb);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeletePOST(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-
-            Product? obj = _unitOfWork.Product.Get(id.Value);
-
-            if (obj == null)
-            {
-                return NotFound();
-            }
-
-            _unitOfWork.Product.Remove(obj);
-            _unitOfWork.Save();
-
-            TempData["success"] = "Product removed successfully";
-
-            return RedirectToAction("Index");
-        }
-
         #region API CALLS
 
+        [HttpGet]
         public IActionResult GetAll()
         {
             var products = _unitOfWork.Product.GetAll(includeProperties: "Category");
 
             return Json(new { data = products });
+        }
+
+        public IActionResult Delete(int? id)
+        {
+            var productToBeDeleted = _unitOfWork.Product.Get(u => u.Id == id);
+            if (productToBeDeleted == null)
+            {
+                return Json(new { success = false, message = "Error while deleting" });
+            }
+
+            var oldFile = Path.Combine(_webHostEnvironment.WebRootPath, productToBeDeleted.ImageUrl.Trim('\\'));
+
+            if (System.IO.File.Exists(oldFile))
+            {
+                System.IO.File.Delete(oldFile);
+            }
+
+            _unitOfWork.Product.Remove(productToBeDeleted);
+            _unitOfWork.Save();
+
+            return Json(new { success = true, message = "Delete successful" });
         }
 
         #endregion
