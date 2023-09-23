@@ -64,9 +64,19 @@ namespace BulkyBook.Web.Areas.Admin.Controllers
                 if (file != null)
                 {
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    string productPath = Path.Combine(wwwRootPath, @"images\product");
+                    string filePath = Path.Combine(wwwRootPath, @"images\product");
 
-                    using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
+                    if (!string.IsNullOrEmpty(vm.Product.ImageUrl))
+                    {
+                        var oldFile = Path.Combine(wwwRootPath, vm.Product.ImageUrl.Trim('\\'));
+
+                        if (System.IO.File.Exists(oldFile))
+                        {
+                            System.IO.File.Delete(oldFile);
+                        }
+                    }
+
+                    using (var fileStream = new FileStream(Path.Combine(filePath, fileName), FileMode.Create))
                     {
                         file.CopyTo(fileStream);
                     }
@@ -74,11 +84,18 @@ namespace BulkyBook.Web.Areas.Admin.Controllers
                     vm.Product.ImageUrl = @"\images\product\" + fileName;
                 }
 
-                _unitOfWork.Product.Add(vm.Product);
+                if (vm.Product.Id == 0)
+                {
+                    _unitOfWork.Product.Add(vm.Product);
+                    TempData["success"] = "Product created successfully";
+                }
+                else
+                {
+                    _unitOfWork.Product.Update(vm.Product);
+                    TempData["success"] = "Product updated successfully";
+                }
+
                 _unitOfWork.Save();
-
-                TempData["success"] = "Product created successfully";
-
                 return RedirectToAction("Index");
             }
             else
